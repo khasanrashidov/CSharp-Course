@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Book xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <title>Serialization Overview</title>
+  <author>Microsoft</author>
+  <genre>Computer</genre>
+  <price>9.99</price>
+  <publish_date>2000-10-01</publish_date>
+  <description>An overview of .NET serialization.</description>
+</Book>
