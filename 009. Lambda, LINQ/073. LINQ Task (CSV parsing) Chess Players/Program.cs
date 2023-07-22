@@ -15,7 +15,7 @@ namespace LINQ
             List<ChessPlayer> playersList = File.ReadAllLines(file)
                 .Skip(1)
                 // or .Select(ChessPlayer.ParseFideCsv)
-                .Select(x => ChessPlayer.ParseFideCsv(x))
+                .Select(x => ChessPlayer.ParseFideCsvLine(x))
                 // Old-style anonymous method syntax:
                 //.Where(delegate (ChessPlayer player) { return player.BirthYear >= 1988; })
                 .Where(player => player.BirthYear >= 1988)
@@ -26,9 +26,9 @@ namespace LINQ
 
 
             // SQL-like syntax:
-            List<ChessPlayer> playersList3 = File.ReadAllLines(file)
-                .Skip(1)
-                .Select(ChessPlayer.ParseFideCsv);
+            IEnumerable<ChessPlayer> playersList3 = File.ReadAllLines(file)
+                                                        .Skip(1)
+                                                        .Select(ChessPlayer.ParseFideCsvLine);
 
             var filtered = from player in playersList3
                            where player.BirthYear >= 1988
@@ -118,6 +118,21 @@ namespace LINQ
             // Any() and All() return bool
             Console.WriteLine($"Are there any players from China? {playersList.Any(player => player.Country == "CHN")}");
             Console.WriteLine($"Are all players from Russia? {playersList.All(player => player.Country == "RUS")}");
+
+
+            // Practical Task - Chess Players
+            Console.WriteLine("Practical Task - Chess Players");
+            var players = File.ReadAllLines("Top100ChessPlayers.csv")
+                            .Skip(1)
+                            .Select(ChessPlayer.ParseFideCsvLine)
+                            .Where(player => player.Country == "RUS")
+                            .OrderBy(player => player.BirthYear)
+                            .ToList(); // materialize the query using ToList()
+
+            foreach (var player in players)
+            {
+                Console.WriteLine(player);
+            }
         }
     }
 }

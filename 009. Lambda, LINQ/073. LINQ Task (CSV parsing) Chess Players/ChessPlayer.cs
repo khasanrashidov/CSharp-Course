@@ -14,7 +14,7 @@ namespace LINQ
             return $"Full name: {FirstName} {LastName}, Country: {Country}, Birth year: {BirthYear}, Rating: {Rating}";
         }
 
-        public static ChessPlayer ParseFideCsv(string line)
+        public static ChessPlayer ParseFideCsvLine(string line)
         {
             string[] parts = line.Split(';');
             return new ChessPlayer
