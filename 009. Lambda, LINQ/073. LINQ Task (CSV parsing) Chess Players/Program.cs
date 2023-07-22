@@ -14,12 +14,58 @@ namespace LINQ
         {
             List<ChessPlayer> playersList = File.ReadAllLines(file)
                 .Skip(1)
-                .Select(x => ChessPlayer.ParseFideCsv(x)) // or .Select(ChessPlayer.ParseFideCsv)
+                // or .Select(ChessPlayer.ParseFideCsv)
+                .Select(x => ChessPlayer.ParseFideCsv(x))
+                // Old-style anonymous method syntax:
+                //.Where(delegate (ChessPlayer player) { return player.BirthYear >= 1988; })
                 .Where(player => player.BirthYear >= 1988)
                 .OrderByDescending(player => player.Rating)
                 .ThenBy(player => player.Country)
-                .Take(10) 
+                .Take(10)
                 .ToList(); // if no ToList() then it returns IEnumerable<ChessPlayer>
+
+
+            // SQL-like syntax:
+            List<ChessPlayer> playersList3 = File.ReadAllLines(file)
+                .Skip(1)
+                .Select(ChessPlayer.ParseFideCsv);
+
+            var filtered = from player in playersList3
+                           where player.BirthYear >= 1988
+                           orderby player.Rating descending, player.Country
+                           select player;
+
+
+            // Multiple Enumerations
+            // E.g.: when we don't have ToList() (greedy loading)
+            // and we enumerate over the collection multiple times, the query is executed multiple times.
+            // If we enumerate over the same collection multiple times, the query is executed multiple times.
+            // To avoid this, we can store the result in a list and then enumerate over the list.
+            // Example of a problem:
+            foreach (var player in playersList)
+            {
+                Console.WriteLine(player);
+            }
+
+            foreach (var player in playersList)
+            {
+                Console.WriteLine(player);
+            }
+            // So above code executes the query twice.
+            // To avoid this, we can store the result in a list and then enumerate over the list.
+            // Example of a solution:
+            List<ChessPlayer> playersList2 = playersList.ToList();
+            foreach (var player in playersList2)
+            {
+                Console.WriteLine(player);
+            }
+
+            foreach (var player in playersList2)
+            {
+                Console.WriteLine(player);
+            }
+            // So above code executes the query only once.
+
 
             Console.WriteLine($"The lowest rating in TOP 10 is {playersList.Min(player => player.Rating)}");
             Console.WriteLine($"The highest rating in TOP 10 is {playersList.Max(player => player.Rating)}");
@@ -36,7 +82,7 @@ namespace LINQ
             // All() returns true if all elements satisfy the condition
             // Contains() returns true if there is an element that equals to the specified value
             // Distinct() returns distinct elements
-            
+
             // First() and Last()
             Console.WriteLine($"USA players count is {playersList.Count(player => player.Country == "USA")}");
             Console.WriteLine($"First USA player is {playersList.First(player => player.Country == "USA")}");
@@ -49,6 +95,7 @@ namespace LINQ
             // Just calling First() and Last() without any parameters returns first and last elements
             Console.WriteLine($"First player is {playersList.First()}");
             Console.WriteLine($"Last player is {playersList.Last()}");
+            // Above code is an example of Multiple Enumerations.
 
             // Just calling FirstOrDefault() and LastOrDefault() without any parameters returns first and last elements or null
             Console.WriteLine($"First player is {playersList.FirstOrDefault()}");
